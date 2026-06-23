@@ -1,0 +1,73 @@
+﻿@page "/workflows/run/{WorkflowId}"
+@using FlowPilot.Web.Models
+@using FlowPilot.Web.Services
+
+@inject ApiService ApiService
+
+<h3>Run Workflow</h3>
+
+@if (workflow == null)
+{
+    <p>Loading...</p>
+}
+else
+{
+    <div>
+
+        <h4>@workflow.Name</h4>
+
+        <p>@workflow.Description</p>
+
+        <textarea class="form-control"
+                  rows="10"
+                  @bind="UserInput">
+        </textarea>
+
+        <br />
+
+        <button class="btn btn-primary"
+                @onclick="RunWorkflow">
+
+            Run Workflow
+
+        </button>
+
+    </div>
+
+    <hr />
+
+    <pre>@Result</pre>
+}
+
+@code {
+
+    [Parameter]
+    public string WorkflowId { get; set; } = "";
+
+    private Workflow? workflow;
+
+    private string UserInput = "";
+
+    private string Result = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        var workflows =
+            await ApiService.GetWorkflows();
+
+        workflow =
+            workflows.FirstOrDefault(
+                x => x.Id == WorkflowId);
+    }
+
+    private async Task RunWorkflow()
+    {
+        Result = "Running...";
+
+        Result =
+            await ApiService.RunWorkflow(
+                WorkflowId,
+                UserInput);
+    }
+
+}

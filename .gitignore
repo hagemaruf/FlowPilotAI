@@ -1,0 +1,66 @@
+# =========================
+# Python
+# =========================
+
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Environment
+.env
+
+# ChromaDB
+chroma_db/
+
+# Uploads
+uploads/
+
+# Visual Studio
+.vs/
+
+# =========================
+# VS Code
+# =========================
+
+.vscode/
+
+# =========================
+# Blazor / .NET
+# =========================
+
+bin/
+obj/
+
+# User-specific files
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+*.vsidx
+
+# Rider
+.idea/
+
+# NuGet
+*.nupkg
+.nuget/
+
+# Build logs
+*.log
+
+# Test results
+TestResults/
+
+# wwwroot generated files
+wwwroot/dist/
+wwwroot/build/
+
+# =========================
+# OS Files
+# =========================
+
+.DS_Store
+Thumbs.db
+desktop.ini

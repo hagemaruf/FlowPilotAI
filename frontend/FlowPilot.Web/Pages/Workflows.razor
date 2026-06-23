@@ -1,0 +1,124 @@
+﻿@page "/workflows"
+@using FlowPilot.Web.Models
+@using FlowPilot.Web.Services
+
+@inject ApiService ApiService
+
+<h3>Workflows</h3>
+
+<div class="workflow-form">
+
+    <input class="form-control mb-2"
+           placeholder="Workflow Name"
+           @bind="NewWorkflowName" />
+
+    <input class="form-control mb-2"
+           placeholder="Description"
+           @bind="NewWorkflowDescription" />
+
+    <textarea class="form-control mb-2"
+              rows="5"
+              placeholder="Prompt"
+              @bind="NewWorkflowPrompt">
+    </textarea>
+
+    <button class="btn btn-primary"
+            @onclick="CreateWorkflow">
+        Create Workflow
+    </button>
+
+</div>
+
+<hr />
+
+@if (workflows == null)
+{
+    <p>Loading...</p>
+}
+else if (workflows.Count == 0)
+{
+    <div class="alert alert-info">
+        No workflows yet.
+        Create your first AI workflow.
+    </div>
+}
+else
+{
+    @foreach (var workflow in workflows)
+    {
+        <div class="workflow-card">
+
+            <h4>@workflow.Name</h4>
+
+            <p>@workflow.Description</p>
+
+            <details>
+                <summary>Prompt</summary>
+
+                <pre>@workflow.Prompt</pre>
+            </details>
+
+            <div class="workflow-actions">
+
+                <a href="/workflows/run/@workflow.Id"
+                   class="btn btn-success btn-sm">
+                    Run
+                </a>
+
+                <button class="btn btn-danger btn-sm"
+                        @onclick="() => DeleteWorkflow(workflow.Id)">
+                    Delete
+                </button>
+
+            </div>
+
+        </div>
+    }
+}
+
+@code {
+
+    private List<Workflow> workflows = [];
+
+    private string NewWorkflowName = "";
+
+    private string NewWorkflowDescription = "";
+
+    private string NewWorkflowPrompt = "";
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadWorkflows();
+    }
+
+    private async Task LoadWorkflows()
+    {
+        workflows =
+            await ApiService.GetWorkflows();
+    }
+
+    private async Task CreateWorkflow()
+    {
+        if (string.IsNullOrWhiteSpace(NewWorkflowName))
+            return;
+
+        await ApiService.CreateWorkflow(
+            NewWorkflowName,
+            NewWorkflowDescription,
+            NewWorkflowPrompt);
+
+        NewWorkflowName = "";
+        NewWorkflowDescription = "";
+        NewWorkflowPrompt = "";
+
+        await LoadWorkflows();
+    }
+
+    private async Task DeleteWorkflow(string workflowId)
+    {
+        await ApiService.DeleteWorkflow(workflowId);
+
+        await LoadWorkflows();
+    }
+
+}
