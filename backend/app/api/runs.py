@@ -1,7 +1,12 @@
 from fastapi import APIRouter, HTTPException
 
-from app.models.run_request import RunWorkflowRequest
+from uuid import uuid4
+from datetime import datetime
 
+from app.models.run_request import RunWorkflowRequest
+from app.models.run_history import RunHistory
+
+from app.services.run_history_service import add
 from app.services.workflow_service import get_by_id
 from app.services.workflow_engine import execute
 
@@ -9,7 +14,9 @@ router = APIRouter()
 
 
 @router.post("")
-def run_workflow(request: RunWorkflowRequest):
+def run_workflow(
+    request: RunWorkflowRequest
+):
 
     workflow = get_by_id(
         request.workflow_id
@@ -22,11 +29,19 @@ def run_workflow(request: RunWorkflowRequest):
             detail="Workflow not found"
         )
 
-    result = execute(
-        workflow.prompt,
+    execution_result = execute(
+        workflow,
         request.user_input
     )
 
-    return {
-        "result": result
-    }
+    history = RunHistory(
+        id=str(uuid4()),
+        workflow_name=workflow.name,
+        user_input=request.user_input,
+        result=execution_result["final_result"],
+        executed_at=datetime.utcnow()
+    )
+
+    add(history)
+
+    return execution_result

@@ -2,6 +2,8 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from app.api.workflows import router as workflow_router
 from app.api.runs import router as run_router
+from app.api.history import router as history_router
+from app.api.templates import router as templates_router
 
 app = FastAPI(
     title="FlowPilot AI",
@@ -37,4 +39,16 @@ app.include_router(
     run_router,
     prefix="/api/runs",
     tags=["Runs"]
+)
+
+app.include_router(
+    history_router,
+    prefix="/api/history",
+    tags=["History"]
+)
+
+app.include_router(
+    templates_router,
+    prefix="/api/templates",
+    tags=["Templates"]
 )

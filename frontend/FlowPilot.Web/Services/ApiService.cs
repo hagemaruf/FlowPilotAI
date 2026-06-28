@@ -19,19 +19,11 @@ public class ApiService
         ) ?? new List<Workflow>();
     }
 
-    public async Task CreateWorkflow(
-    string name,
-    string description,
-    string prompt)
+    public async Task CreateWorkflow(CreateWorkflowRequest request)
     {
         await _http.PostAsJsonAsync(
             "api/workflows",
-            new
-            {
-                name,
-                description,
-                prompt
-            });
+            request);
     }
 
     public async Task DeleteWorkflow(
@@ -41,7 +33,7 @@ public class ApiService
             $"api/workflows/{workflowId}");
     }
 
-    public async Task<string> RunWorkflow(
+    public async Task<WorkflowExecutionResult?> RunWorkflow(
     string workflowId,
     string userInput)
     {
@@ -54,10 +46,23 @@ public class ApiService
                     user_input = userInput
                 });
 
-        var result =
-            await response.Content
-                .ReadFromJsonAsync<RunResponse>();
+        response.EnsureSuccessStatusCode();
 
-        return result?.Result ?? "";
+        return await response.Content
+            .ReadFromJsonAsync<WorkflowExecutionResult>();
+    }
+
+    public async Task<List<RunHistory>> GetHistory()
+    {
+        return await _http.GetFromJsonAsync<List<RunHistory>>(
+            "api/history")
+            ?? new();
+    }
+
+    public async Task<List<WorkflowTemplate>> GetTemplates()
+    {
+        return await _http.GetFromJsonAsync<List<WorkflowTemplate>>(
+            "api/templates")
+            ?? new();
     }
 }

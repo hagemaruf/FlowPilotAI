@@ -8,6 +8,22 @@
 
 <div class="workflow-form">
 
+    <select class="form-select mb-2"
+            @onchange="TemplateChanged">
+
+        <option value="">
+            Select Template
+        </option>
+
+        @foreach (var template in Templates)
+        {
+            <option value="@template.Name">
+                @template.Name
+            </option>
+        }
+
+    </select>
+
     <input class="form-control mb-2"
            placeholder="Workflow Name"
            @bind="NewWorkflowName" />
@@ -16,11 +32,41 @@
            placeholder="Description"
            @bind="NewWorkflowDescription" />
 
-    <textarea class="form-control mb-2"
-              rows="5"
-              placeholder="Prompt"
-              @bind="NewWorkflowPrompt">
-    </textarea>
+    @foreach (var step in Steps)
+    {
+        <div class="card mb-3">
+
+            <div class="card-body">
+
+                <h6>
+                    Step @step.Order
+                </h6>
+
+                <input class="form-control mb-2"
+                       placeholder="Step Name"
+                       @bind="step.Name" />
+
+                <textarea class="form-control"
+                          rows="5"
+                          placeholder="Prompt"
+                          @bind="step.Prompt">
+                </textarea>
+
+                <button class="btn btn-danger mt-2"
+                        @onclick="() =>  RemoveStep(step)">Remove Step
+                </button>
+
+            </div>
+
+        </div>
+    }
+
+    <button class="btn btn-secondary"
+            @onclick="AddStep">
+
+        Add Step
+
+    </button>
 
     <button class="btn btn-primary"
             @onclick="CreateWorkflow">
@@ -52,11 +98,17 @@ else
 
             <p>@workflow.Description</p>
 
-            <details>
-                <summary>Prompt</summary>
+            <ul>
 
-                <pre>@workflow.Prompt</pre>
-            </details>
+                @foreach (var step
+                          in workflow.Steps)
+                {
+                    <li>
+                        @step.Name
+                    </li>
+                }
+
+            </ul>
 
             <div class="workflow-actions">
 
@@ -84,11 +136,21 @@ else
 
     private string NewWorkflowDescription = "";
 
-    private string NewWorkflowPrompt = "";
+    private List<WorkflowStep> Steps =
+        [
+            new()
+            {
+                Order = 1
+            }
+        ];
+
+    private List<WorkflowTemplate> Templates = new();
 
     protected override async Task OnInitializedAsync()
     {
         await LoadWorkflows();
+
+        Templates = await ApiService.GetTemplates();
     }
 
     private async Task LoadWorkflows()
@@ -99,19 +161,32 @@ else
 
     private async Task CreateWorkflow()
     {
-        if (string.IsNullOrWhiteSpace(NewWorkflowName))
-            return;
+        var request =
+            new CreateWorkflowRequest
+            {
+                Name = NewWorkflowName,
+                Description =
+                    NewWorkflowDescription,
 
-        await ApiService.CreateWorkflow(
-            NewWorkflowName,
-            NewWorkflowDescription,
-            NewWorkflowPrompt);
+                Steps = Steps
+            };
 
-        NewWorkflowName = "";
-        NewWorkflowDescription = "";
-        NewWorkflowPrompt = "";
+        await ApiService
+            .CreateWorkflow(request);
 
         await LoadWorkflows();
+
+        NewWorkflowName = "";
+
+        NewWorkflowDescription = "";
+
+        Steps =
+        [
+            new()
+        {
+            Order = 1
+        }
+        ];
     }
 
     private async Task DeleteWorkflow(string workflowId)
@@ -119,6 +194,59 @@ else
         await ApiService.DeleteWorkflow(workflowId);
 
         await LoadWorkflows();
+    }
+
+    private void TemplateChanged(
+    ChangeEventArgs e)
+    {
+        var name =
+            e.Value?.ToString();
+
+        var template =
+            Templates
+            .FirstOrDefault(
+                x => x.Name == name);
+
+        if (template is null)
+            return;
+
+        NewWorkflowName =
+            template.Name;
+
+        NewWorkflowDescription =
+            template.Description;
+
+        Steps = template.Steps
+                .Select(x =>
+                    new WorkflowStep
+                    {
+                        Order = x.Order,
+                        Name = x.Name,
+                        Prompt = x.Prompt
+                    })
+                .ToList();
+    }
+
+    private void AddStep()
+    {
+        Steps.Add(
+            new WorkflowStep
+            {
+                Order = Steps.Count + 1
+            });
+    }
+
+    private void RemoveStep(
+    WorkflowStep step)
+    {
+        Steps.Remove(step);
+
+        for (int i = 0;
+             i < Steps.Count;
+             i++)
+        {
+            Steps[i].Order = i + 1;
+        }
     }
 
 }

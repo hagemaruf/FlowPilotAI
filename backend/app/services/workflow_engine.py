@@ -1,14 +1,25 @@
-from app.agents.ollama_agent import run as run_agent
+from app.services.agent_service import execute_step
 
 
-def execute(prompt: str, user_input: str):
+def execute(workflow, user_input: str):
 
-    final_prompt = f"""
-{prompt}
+    current_input = user_input
 
-Input:
+    step_results = []
 
-{user_input}
-"""
+    for step in sorted(workflow.steps, key=lambda s: s.order):
 
-    return run_agent(final_prompt)
+        result = execute_step(
+            step.prompt,
+            current_input
+        )
+
+        step_results.append({
+            "step": step.name,
+            "result": result
+        })
+
+    return {
+        "final_result": current_input,
+        "steps": step_results
+    }

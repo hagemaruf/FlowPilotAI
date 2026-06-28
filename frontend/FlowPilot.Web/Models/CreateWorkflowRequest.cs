@@ -1,10 +1,10 @@
 ﻿namespace FlowPilot.Web.Models;
 
-public class Workflow
+public class CreateWorkflowRequest
 {
-    public string Id { get; set; } = "";
     public string Name { get; set; } = "";
+
     public string Description { get; set; } = "";
+
     public List<WorkflowStep> Steps { get; set; } = [];
-    public DateTime CreatedAt { get; set; }
 }
