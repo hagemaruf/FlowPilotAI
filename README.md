@@ -36,7 +36,7 @@ FlowPilot enables users to create AI workflows, execute AI agents, and automate 
 
 ### Create Multiple-Step Workflow
 
-![Workflow Management](docs/screenshots/multiplestep_workflow.png)
+![Workflow Management](docs/screenshots/multistep_workflow.png)
 
 ### Run Workflow
 
