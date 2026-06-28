@@ -59,28 +59,35 @@ FlowPilot enables users to create AI workflows, execute AI agents, and automate 
 ## Example Workflow
 
 ### Meeting Notes Processor
-
-Workflow Prompt:
-
-```text
-Extract all action items from the meeting notes.
-Return a numbered list.
-```
-
 Input:
 
 ```text
-Call customer tomorrow.
-Prepare proposal.
-Create invoice.
-```
+Sprint Planning Meeting
+Date: June 26, 2026
 
-Output:
+Attendees:
+- Alice (Project Manager)
+- Bob (Backend Developer)
+- Charlie (Frontend Developer)
+- Diana (QA Engineer)
 
-```text
-1. Call customer tomorrow
-2. Prepare proposal
-3. Create invoice
+Discussion:
+
+The team reviewed the progress of FlowPilot AI.
+
+The workflow execution feature has been completed successfully.
+
+The UI still needs improvement to support multi-step workflow visualization.
+
+Bob will implement workflow history persistence using SQLite.
+
+Charlie will redesign the Workflow Run page to display execution steps in a timeline.
+
+Diana will prepare end-to-end test cases after the UI changes are completed.
+
+The team agreed to release version 0.2 next Friday if all features pass testing.
+
+Next meeting is scheduled for Tuesday at 10:00 AM.
 ```
 
 ---
