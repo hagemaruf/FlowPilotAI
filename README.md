@@ -34,6 +34,10 @@ FlowPilot enables users to create AI workflows, execute AI agents, and automate 
 
 ![Workflow Management](docs/screenshots/workflows.png)
 
+### Create Multiple-Step Workflow
+
+![Workflow Management](docs/screenshots/multiple.png)
+
 ### Run Workflow
 
 ![Run Workflow](docs/screenshots/run.png)
@@ -42,9 +46,13 @@ FlowPilot enables users to create AI workflows, execute AI agents, and automate 
 
 ![User Input](docs/screenshots/input.png)
 
-### AI Generated Result
+### Workflow Execution
 
-![AI Result](docs/screenshots/run_workflow.png)
+![AI Result](docs/screenshots/result.png)
+
+### Workflow History
+
+![AI Result](docs/screenshots/history.png)
 
 ---
 
@@ -144,9 +152,9 @@ Local LLM (Llama 3.2)
 
 ### Phase 2 — Workflow Intelligence
 
-* [ ] Workflow Run History
-* [ ] Workflow Templates
-* [ ] Execution Logs
+* [x] Workflow Run History
+* [x] Workflow Templates
+* [x] Execution Logs
 * [ ] Result Export
 
 ### Phase 3 — Advanced Automation
